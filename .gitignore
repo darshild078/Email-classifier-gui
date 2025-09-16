@@ -1,0 +1,20 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual environment
+.venv/
+venv/
+
+# VS Code settings
+.vscode/
+
+# Data files
+data/raw/
+data/processed/
+
+# Models
+models/
+
+# Logs
+*.log
