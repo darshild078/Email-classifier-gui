@@ -6,9 +6,9 @@ import os
 import pickle
 import threading
 from typing import Dict
-from ..utils.logger import setup_logger
-from .preprocessor import TextPreprocessor
-from .feature_engineer import SpamFeatureEngineer
+from utils.logger import setup_logger
+from src.core.preprocessor import TextPreprocessor
+from feature_engineer import SpamFeatureEngineer
 
 logger = setup_logger(__name__)
 

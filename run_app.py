@@ -8,9 +8,10 @@ from tkinter import messagebox
 from pathlib import Path
 import traceback
 
-# Add src to path
+# Add src and src/core to path for imports
 project_root = Path(__file__).parent
 sys.path.insert(0, str(project_root / 'src'))
+sys.path.insert(1, str(project_root / 'src' / 'core'))
 
 def check_python_version():
     """Check Python version."""
@@ -85,7 +86,15 @@ Open training script now?"""
 def run_application():
     """Start GUI app."""
     try:
-        from gui.main_window import SpamDetectorMainWindow
+        # Try different import paths based on your project structure
+        try:
+            from gui.main_window import SpamDetectorMainWindow
+        except ImportError:
+            try:
+                from core.main_window import SpamDetectorMainWindow
+            except ImportError:
+                from main_window import SpamDetectorMainWindow
+        
         app = SpamDetectorMainWindow()
         app.run()
     except ImportError as e:
