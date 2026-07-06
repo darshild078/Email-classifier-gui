@@ -4,22 +4,43 @@ from tkinter import ttk
 class SpamDetectorTheme:
     """Central theme configuration for spam detector GUI."""
 
-    # Color palette
+    # Codex-inspired professional palette: neutral surfaces, warm text, quiet accent.
     COLORS = {
-        'primary': '#2E86AB', 'primary_dark': '#1B4D72', 'secondary': '#A23B72',
-        'success': '#28A745', 'danger': '#DC3545', 'warning': '#FFC107', 'info': '#17A2B8',
-        'light_gray': '#F8F9FA', 'medium_gray': '#6C757D', 'dark_gray': '#343A40',
-        'border': '#DEE2E6', 'hover': '#E3F2FD', 'active': '#BBDEFB', 'disabled': '#E9ECEF'
+        'background': '#0F1115',
+        'surface': '#161A20',
+        'surface_raised': '#1E232B',
+        'surface_muted': '#12151A',
+        'primary': '#7DD3C7',
+        'primary_dark': '#46A89A',
+        'primary_soft': '#193D3A',
+        'secondary': '#D8C7A1',
+        'success': '#7BC99E',
+        'danger': '#EF7D7D',
+        'danger_dark': '#D86565',
+        'warning': '#E8C76A',
+        'info': '#85B8FF',
+        'text': '#F4F1E8',
+        'text_muted': '#A7ADB7',
+        'text_subtle': '#767D89',
+        'border': '#2A303A',
+        'border_strong': '#3A414E',
+        'hover': '#252B34',
+        'active': '#2F5D59',
+        'disabled': '#272C34',
+        # Backward-compatible aliases used throughout older widgets.
+        'light_gray': '#0F1115',
+        'medium_gray': '#A7ADB7',
+        'dark_gray': '#F4F1E8',
     }
 
     # Fonts
     FONTS = {
-        'title': ('Segoe UI', 18, 'bold'),
-        'heading': ('Segoe UI', 14, 'bold'),
+        'title': ('Segoe UI Semibold', 22, 'normal'),
+        'heading': ('Segoe UI Semibold', 13, 'normal'),
         'body': ('Segoe UI', 10, 'normal'),
-        'body_bold': ('Segoe UI', 10, 'bold'),
-        'monospace': ('Consolas', 9, 'normal'),
-        'small': ('Segoe UI', 8, 'normal')
+        'body_bold': ('Segoe UI Semibold', 10, 'normal'),
+        'monospace': ('Cascadia Mono', 9, 'normal'),
+        'small': ('Segoe UI', 9, 'normal')
     }
 
     # Spacing values
@@ -43,47 +64,90 @@ def apply_modern_style():
     
     theme = SpamDetectorTheme()
 
+    style.configure('.',
+                    background=theme.COLORS['background'],
+                    foreground=theme.COLORS['text'],
+                    font=theme.FONTS['body'])
+    style.configure('TFrame', background=theme.COLORS['background'])
+    style.configure('Surface.TFrame', background=theme.COLORS['surface'])
+    style.configure('TLabel',
+                    background=theme.COLORS['background'],
+                    foreground=theme.COLORS['text'],
+                    font=theme.FONTS['body'])
+
     # Primary buttons
     style.configure('Modern.TButton',
                     background=theme.COLORS['primary'],
-                    foreground='white',
+                    foreground=theme.COLORS['background'],
                     borderwidth=0,
+                    focusthickness=0,
+                    padding=(16, 9),
                     font=theme.FONTS['body_bold'])
     style.map('Modern.TButton',
               background=[('active', theme.COLORS['primary_dark']),
-                          ('pressed', theme.COLORS['primary_dark'])])
+                          ('pressed', theme.COLORS['primary_dark']),
+                          ('disabled', theme.COLORS['disabled'])],
+              foreground=[('disabled', theme.COLORS['text_subtle'])])
+
+    style.configure('Secondary.TButton',
+                    background=theme.COLORS['surface_raised'],
+                    foreground=theme.COLORS['text'],
+                    borderwidth=1,
+                    bordercolor=theme.COLORS['border'],
+                    focusthickness=0,
+                    padding=(14, 8),
+                    font=theme.FONTS['body'])
+    style.map('Secondary.TButton',
+              background=[('active', theme.COLORS['hover']),
+                          ('pressed', theme.COLORS['hover']),
+                          ('disabled', theme.COLORS['disabled'])],
+              foreground=[('disabled', theme.COLORS['text_subtle'])])
 
     # Danger buttons (e.g., clear/reset)
     style.configure('Danger.TButton',
                     background=theme.COLORS['danger'],
-                    foreground='white',
+                    foreground=theme.COLORS['background'],
                     borderwidth=0,
+                    focusthickness=0,
+                    padding=(14, 8),
                     font=theme.FONTS['body'])
     style.map('Danger.TButton',
-              background=[('active', '#C82333'), ('pressed', '#C82333')])
+              background=[('active', theme.COLORS['danger_dark']),
+                          ('pressed', theme.COLORS['danger_dark'])])
 
     # Success buttons
     style.configure('Success.TButton',
                     background=theme.COLORS['success'],
-                    foreground='white',
+                    foreground=theme.COLORS['background'],
                     borderwidth=0,
+                    padding=(14, 8),
                     font=theme.FONTS['body_bold'])
 
     # Label frames
     style.configure('Modern.TLabelframe',
-                    background=theme.COLORS['light_gray'],
-                    borderwidth=1, relief='solid')
+                    background=theme.COLORS['surface'],
+                    bordercolor=theme.COLORS['border'],
+                    borderwidth=1,
+                    relief='solid')
     style.configure('Modern.TLabelframe.Label',
-                    background=theme.COLORS['light_gray'],
-                    foreground=theme.COLORS['dark_gray'],
+                    background=theme.COLORS['surface'],
+                    foreground=theme.COLORS['text'],
                     font=theme.FONTS['heading'])
+    style.configure('TPanedwindow', background=theme.COLORS['background'])
+    style.configure('Sash', background=theme.COLORS['border'])
+    style.configure('Vertical.TScrollbar',
+                    background=theme.COLORS['surface_raised'],
+                    troughcolor=theme.COLORS['surface_muted'],
+                    bordercolor=theme.COLORS['border'],
+                    arrowcolor=theme.COLORS['text_muted'])
 
     return style, theme
 
-def create_status_indicator(parent, text="Ready", status="info"):
+def create_status_indicator(parent, text="Ready", status="info", background=None):
     """Create a status widget with colored dot and text."""
     theme = SpamDetectorTheme()
-    frame = tk.Frame(parent, background=theme.COLORS['light_gray'])
+    bg = background or theme.COLORS['background']
+    frame = tk.Frame(parent, background=bg)
 
     status_colors = {
         'info': theme.COLORS['info'],
@@ -94,15 +158,15 @@ def create_status_indicator(parent, text="Ready", status="info"):
 
     # Colored dot
     canvas = tk.Canvas(frame, width=12, height=12,
-                       background=theme.COLORS['light_gray'],
+                       background=bg,
                        highlightthickness=0)
     canvas.create_oval(2, 2, 10, 10, fill=status_colors.get(status, theme.COLORS['info']), outline='')
     canvas.pack(side=tk.LEFT, padx=(0, theme.SPACING['sm']))
 
     # Status text
     label = tk.Label(frame, text=text,
-                     background=theme.COLORS['light_gray'],
-                     foreground=theme.COLORS['dark_gray'],
+                     background=bg,
+                     foreground=theme.COLORS['text_muted'],
                      font=theme.FONTS['body'])
     label.pack(side=tk.LEFT)
 
@@ -112,8 +176,8 @@ class ModernScrolledText(tk.Frame):
     """Custom scrolled text widget with professional theme integration."""
 
     def __init__(self, parent, **kwargs):
-        super().__init__(parent)
         theme = SpamDetectorTheme()
+        super().__init__(parent, background=kwargs.get('frame_background', theme.COLORS['border']))
 
         self.text_widget = tk.Text(
             self,
@@ -121,11 +185,15 @@ class ModernScrolledText(tk.Frame):
             height=kwargs.get('height', 10),
             width=kwargs.get('width', 50),
             font=kwargs.get('font', theme.FONTS['body']),
-            background=kwargs.get('background', 'white'),
-            foreground=kwargs.get('foreground', theme.COLORS['dark_gray']),
-            borderwidth=1,
-            relief='solid',
-            selectbackground=theme.COLORS['active']
+            background=kwargs.get('background', theme.COLORS['surface_muted']),
+            foreground=kwargs.get('foreground', theme.COLORS['text']),
+            insertbackground=theme.COLORS['text'],
+            borderwidth=0,
+            relief='flat',
+            padx=14,
+            pady=12,
+            selectbackground=theme.COLORS['active'],
+            selectforeground=theme.COLORS['text']
         )
 
         scrollbar = ttk.Scrollbar(self, orient=tk.VERTICAL, command=self.text_widget.yview)
